@@ -1,0 +1,96 @@
+{
+  "name": "quill",
+  "publisher": "local",
+  "displayName": "Quill",
+  "description": "Local AI commit message generator powered by Ollama",
+  "version": "0.1.0",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "quill.generateMessage",
+        "title": "Generate Commit Message",
+        "icon": "$(hubot)",
+        "category": "Quill"
+      },
+      {
+        "command": "quill.switchModel",
+        "title": "Switch Model",
+        "icon": "$(list-selection)",
+        "category": "Quill"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "quill.generateMessage",
+          "group": "navigation@1",
+          "when": "scmProvider == git"
+        },
+        {
+          "command": "quill.switchModel",
+          "group": "navigation@2",
+          "when": "scmProvider == git"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Quill",
+      "properties": {
+        "quill.ollamaEndpoint": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama 服务地址"
+        },
+        "quill.model": {
+          "type": "string",
+          "default": "gpt-oss:20b",
+          "description": "当前使用的模型名称（会从 Ollama 自动拉取列表）"
+        },
+        "quill.language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "zh"
+          ],
+          "enumDescriptions": [
+            "英文 commit message（推荐）",
+            "中文 commit message"
+          ],
+          "default": "en",
+          "description": "Commit message 语言"
+        },
+        "quill.maxDiffLength": {
+          "type": "number",
+          "default": 8000,
+          "description": "传入模型的 diff 最大字符数（过长会截断）"
+        }
+      }
+    }
+  },
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "build:icon": "node scripts/build-icon.js",
+    "package": "pnpm build:icon && pnpm vsce package --no-dependencies",
+    "vscode:prepublish": "pnpm build:icon && pnpm compile"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.3.0"
+  }
+}
